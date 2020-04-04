@@ -1,8 +1,9 @@
-//import 'dart:io';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'package:StoringDemo/todo_model.dart';
+import 'package:StoringDemo/model/model.dart';
+
+ final todoTABLE = 'Todo';
 
 class DBProvider {
   // create a singleton
@@ -33,7 +34,7 @@ class DBProvider {
         print("execute the creation of the database with the version number of $version");
         // Run the CREATE TABLE statement on the database.
         return db.execute(
-          "CREATE TABLE DO_IT(id INTEGER PRIMARY KEY, title TEXT,age INTEGER)",
+          "CREATE TABLE $todoTABLE(id INTEGER PRIMARY KEY AUTOINCREMENT, description TEXT,is_done INTEGER)",
         );
       },
       // Set the version. This executes the onCreate function and provides a
@@ -43,7 +44,13 @@ class DBProvider {
     return database ;
   }
 
-  newTodo(Todo newTodo) async {
+//This is optional, and only used for changing DB schema migrations
+void onUpgrade(Database database, int oldVersion, int newVersion) {
+if (newVersion > oldVersion) {}
+}
+
+
+ /*  newTodo(Todo newTodo) async {
     final db = await database;
     //get the biggest id in the table
     var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM DO_IT");
@@ -55,14 +62,10 @@ class DBProvider {
         [id, newTodo.title, newTodo.age]);
     print("a new item was inserted to the database, the title is ${newTodo.title}");
     return raw;
-  }
+  } */
 
-  getTodo(int id) async {
-    final db = await database;
-    var res = await db.query("DO_IT", where: "id = ?", whereArgs: [id]);
-    return res.isNotEmpty ? Todo.fromMap(res.first) : null;
-  }
 
+/* 
   Future<List<Todo>> getAllPets() async {
     final db = await database;
     var res = await db.query('DO_IT');
@@ -72,18 +75,7 @@ class DBProvider {
 
     print("this method will return all the items ${list.toString()}");
     return list;
-  }
+  } */
 
-  deletePet(int id) async {
-    final db = await database;
-    print("this item was deleted, its id is $id ") ;
-    return db.delete('DO_IT', where: 'id = ?', whereArgs: [id]);
-  }
-
-  deleteAll() async {
-    final db = await database;
-    print("delete all items :P");
-    db.rawDelete('Delete * from DO_IT');
-  }
 }
 
