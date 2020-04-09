@@ -4,8 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:StoringDemo/bloc/todo_bloc.dart';
 import 'package:StoringDemo/model/model.dart';
 
-import 'package:google_fonts/google_fonts.dart';
-
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -15,13 +13,13 @@ class _HomeState extends State<Home> {
   TodoBloc todoBloc;
 
   void initState() {
-  print ('the init state');
+    print('the init state');
     super.initState();
     todoBloc = TodoBloc();
   }
 
   void dispose() {
-  print ('the dispose method');
+    print('the dispose method');
     super.dispose();
     todoBloc.dispose();
   }
@@ -34,16 +32,16 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-  print ('the build widget');
+    print('the build widget');
     return MaterialApp(
       title: 'Do it !',
       home: Scaffold(
         appBar: appBar,
         body:
-        // SafeArea(
-          Container(
-            child: getTodoWidget(),
-          ),
+            // SafeArea(
+            Container(
+          child: getTodoWidget(),
+        ),
         //),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Padding(
@@ -86,13 +84,13 @@ class _HomeState extends State<Home> {
 
   Widget getTodoCardWidget(AsyncSnapshot<List<Todo>> snapshot) {
     if (snapshot.hasData) {
-    print('here is the snapshot');
+      print('here is the snapshot');
       return snapshot.data.length != 0
           ? ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (context, itemPosition) {
                 Todo todo = snapshot.data[itemPosition];
-                    print('here is the item builder');
+                print('here is the item builder');
                 final Widget dismissibleCard = new Dismissible(
                   background: Container(
                     child: Padding(
@@ -143,7 +141,6 @@ class _HomeState extends State<Home> {
                       ),
                       title: Text(
                         todo.description,
-
                       ),
                     ),
                   ),
@@ -158,7 +155,7 @@ class _HomeState extends State<Home> {
               child: noTodoMessageWidget(),
             ));
     } else {
-    print ('circular progress');
+      print('circular progress');
       return Center(
         child: CircularProgressIndicator(
           strokeWidth: 2.0,
@@ -168,12 +165,12 @@ class _HomeState extends State<Home> {
   }
 
   Widget noTodoMessageWidget() {
-  print ('no todo message ');
+    print('no todo message ');
     return Container(
-    child :Center(
-      child: Text(
-        "Start your day right :D",
-      ),
+      child: Center(
+        child: Text(
+          "Start your day right :D",
+        ),
       ),
     );
   }
@@ -212,7 +209,6 @@ class _HomeState extends State<Home> {
                             controller: _todoDescriptionFormController,
                             textInputAction: TextInputAction.newline,
                             maxLines: 2,
- 
                             autofocus: true,
                             decoration: const InputDecoration(
                               hintText: 'I have to...',

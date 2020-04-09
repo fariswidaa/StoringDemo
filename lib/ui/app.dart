@@ -12,7 +12,7 @@ primarySwatch: Colors.purple,
 canvasColor: Colors.transparent
 ),
 //Our only screen/page we have
-home:Scaffold (Home()), ,
+home:Scaffold (body: Home(),), 
 );
 }
 }
