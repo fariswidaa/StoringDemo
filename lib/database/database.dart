@@ -44,11 +44,6 @@ class DBProvider {
     return database ;
   }
 
-//This is optional, and only used for changing DB schema migrations
-void onUpgrade(Database database, int oldVersion, int newVersion) {
-if (newVersion > oldVersion) {}
-}
-
 
  /*  newTodo(Todo newTodo) async {
     final db = await database;

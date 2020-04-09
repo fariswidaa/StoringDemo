@@ -16,6 +16,7 @@ final _todoController = StreamController<List<Todo>>.broadcast();
 get todos => _todoController.stream;
 
 TodoBloc() {
+print ('the bloc constructor');
 getTodos();
 }
 
@@ -23,6 +24,7 @@ getTodos({String query}) async {
 //sink is a way of adding data reactively to the stream
 //by registering a new event
 _todoController.sink.add(await _todoRepository.getAllTodos(query: query));
+print ('get todos using the bloc');
 }
 
 addTodo(Todo todo) async {

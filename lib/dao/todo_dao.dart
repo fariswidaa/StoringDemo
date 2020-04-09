@@ -26,11 +26,13 @@ final db = await dbProvider.database;
 List<Map<String, dynamic>> result;
 if (query != null) {
 if (query.isNotEmpty)
+print ('fetching data with query');
 result = await db.query(todoTABLE,
 columns: columns,
 where: 'description LIKE ?',
 whereArgs: ["%$query%"]);
 } else {
+print ('fetching data without query');
 result = await db.query(todoTABLE, columns: columns);
 }
 
