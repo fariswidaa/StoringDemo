@@ -32,8 +32,10 @@ class _HomeState extends State<Home> {
         title: Text(
           'Do it !',
           style: GoogleFonts.raleway(),
+          // backgroundColor :Colors.black,
         ),
-        backgroundColor: Colors.transparent,
+        // third change 
+      //  backgroundColor: Colors.white,
       ),
       body: SafeArea(
         child: Container(
@@ -73,7 +75,7 @@ class _HomeState extends State<Home> {
             child: new Container(
               color: Colors.transparent,
               child: new Container(
-                height: 200.0,
+                height: 120.0,
                 decoration: new BoxDecoration(
                   color: Colors.white,
                   borderRadius: new BorderRadius.only(
@@ -93,12 +95,10 @@ class _HomeState extends State<Home> {
                             child: TextFormField(
                               controller: _todoDescriptionFormController,
                               textInputAction: TextInputAction.newline,
-                              maxLines: 2,
                               style: TextStyle(
                                   fontSize: 21, fontWeight: FontWeight.w400),
                               autofocus: true,
                               decoration: const InputDecoration(
-                                hintText: 'I have to...',
                                 labelText: 'New Todo',
                                 labelStyle: TextStyle(
                                   color: Colors.indigoAccent,
@@ -116,14 +116,11 @@ class _HomeState extends State<Home> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: 8.0),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.indigoAccent,
-                              radius: 18,
-                              child: IconButton(
+                            child: IconButton(
                                 icon: Icon(
                                   Icons.save,
                                   size: 24.0,
-                                  color: Colors.white,
+                                  color: Colors.blue,
                                 ),
                                 onPressed: () {
                                   final newTodo = Todo(
@@ -138,7 +135,6 @@ class _HomeState extends State<Home> {
                                   }
                                 },
                               ),
-                            ),
                           ),
                         ],
                       ),
@@ -170,7 +166,7 @@ class _HomeState extends State<Home> {
                 final Widget dismissibleCard = new Dismissible(
                   background: Container(
                     child: Padding(
-                      padding: EdgeInsets.only(left: 8.0),
+                       padding: EdgeInsets.only(left: 8.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -186,44 +182,44 @@ class _HomeState extends State<Home> {
                   },
                   direction: _dismissDirection,
                   key: new ObjectKey(todo),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.grey[200], width: 0.5),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    color: Colors.white,
-                    child: ListTile(
-                      leading: InkWell(
-                        onTap: () {
-                          //Reverse the value
-                          todo.is_done = !todo.is_done;
-                          todoBloc.updateTodo(todo);
-                        },
-                        child: Container(
-                          //decoration: BoxDecoration(),
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: todo.is_done
-                                ? Icon(
-                                    Icons.done,
-                                    size: 26.0,
-                                    color: Colors.indigoAccent,
-                                  )
-                                : Icon(
-                                    Icons.check_box_outline_blank,
-                                    size: 26.0,
-                                    color: Colors.blue,
-                                  ),
+                  // first change 
+                  // try remove all the widget if error occurs 
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+                      // second change
+                      child: ListTile(
+                          leading: InkWell(
+                            onTap: () {
+                              //Reverse the value
+                              todo.is_done = !todo.is_done;
+                              todoBloc.updateTodo(todo);
+                            },
+                            child: Container(
+                              //decoration: BoxDecoration(),
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: todo.is_done
+                                    ? Icon(
+                                        Icons.done,
+                                        size: 30.0,
+                                        color: Colors.indigoAccent,
+                                      )
+                                    : Icon(
+                                        Icons.check_box_outline_blank,
+                                        size: 30.0,
+                                        color: Colors.blue,
+                                      ),
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            todo.description,
+                            style: GoogleFonts.raleway(
+                              fontSize: 18.0,
+                            ),
                           ),
                         ),
-                      ),
-                      title: Text(
-                        todo.description,
-                        style: GoogleFonts.raleway(
-                          fontSize: 22.0,
-                        ),
-                      ),
-                    ),
+                      
                   ),
                 );
                 return dismissibleCard;
@@ -245,8 +241,7 @@ class _HomeState extends State<Home> {
       child: Text(
         'Start your day now !',
         style: GoogleFonts.roboto(
-          fontSize: 16.0,
-          fontWeight: FontWeight.bold,
+          fontSize: 22.0,
         ),
         // TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
       ),
