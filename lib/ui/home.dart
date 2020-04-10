@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:google_fonts/google_fonts.dart';
+
 import 'package:StoringDemo/bloc/todo_bloc.dart';
 import 'package:StoringDemo/model/model.dart';
 
@@ -10,42 +12,44 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  TodoBloc todoBloc;
+ 
+  final TodoBloc todoBloc = TodoBloc();
+ 
+void initState (){
+  super.initState();
+}
 
-  void initState() {
-    print('the init state');
-    super.initState();
-    todoBloc = TodoBloc();
-  }
-
-  void dispose() {
-    print('the dispose method');
-    super.dispose();
-    todoBloc.dispose();
-  }
-
-  final appBar = AppBar(
-    elevation: 4.0,
-    backgroundColor: Colors.purple,
-    title: Text('Do it !'),
-  );
+void dispose () {
+  super.dispose();
+      todoBloc.dispose();
+}
+  //Allows Todo card to be dismissable horizontally
+  final DismissDirection _dismissDirection = DismissDirection.horizontal;
 
   @override
   Widget build(BuildContext context) {
-    print('the build widget');
-    return MaterialApp(
-      title: 'Do it !',
-      home: Scaffold(
-        appBar: appBar,
-        body:
-            // SafeArea(
-            Container(
-          child: getTodoWidget(),
-        ),
-        //),
+
+    return Scaffold(
+       appBar :AppBar(
+       title : Text('Do it !' ,style: GoogleFonts.raleway(
+                
+
+                        ),),
+       backgroundColor : Colors.purple,
+       ),
+        body: SafeArea(
+            child: Container(
+                color: Colors.white,
+                child: Container(
+                    //This is where the magic starts
+                    child: getTodosWidget(),
+                    ),
+                    ),
+                    ),
+
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Padding(
-          padding: EdgeInsets.only(bottom: 25),
+          padding: EdgeInsets.only(bottom: 20.0),
           child: FloatingActionButton(
             elevation: 5.0,
             onPressed: () {
@@ -58,22 +62,106 @@ class _HomeState extends State<Home> {
               color: Colors.indigoAccent,
             ),
           ),
-        ),
-        bottomNavigationBar: BottomAppBar(
-          color: Colors.white,
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Colors.grey, width: 0.3),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+        ));
   }
 
-  Widget getTodoWidget() {
+  void _showAddTodoSheet(BuildContext context) {
+    final _todoDescriptionFormController = TextEditingController();
+    showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          return new Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: new Container(
+              color: Colors.transparent,
+              child: new Container(
+                height: 200.0,
+                decoration: new BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: new BorderRadius.only(
+                        topLeft: const Radius.circular(10.0),
+                        topRight: const Radius.circular(10.0),
+                        ),
+                        ),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: 16.0, top: 16.0, right: 16.0),
+                  child: ListView(
+                    children: <Widget>[
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              controller: _todoDescriptionFormController,
+                              textInputAction: TextInputAction.newline,
+                              maxLines: 2,
+                              style: TextStyle(
+                                  fontSize: 21, fontWeight: FontWeight.w400),
+                              autofocus: true,
+                              decoration: const InputDecoration(
+                                  hintText: 'I have to...',
+                                  labelText: 'New Todo',
+                                  labelStyle: TextStyle(
+                                      color: Colors.indigoAccent,
+                                  ), ),
+                              validator: (String value) {
+                                if (value.isEmpty) {
+                                  return 'Empty description!';
+                                }
+                                return value.contains('')
+                                    ? 'Do not use the @ char.'
+                                    : null;
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only( top: 8.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.indigoAccent,
+                              radius: 18,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.save,
+                                  size: 24.0,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  final newTodo = Todo(
+                                      description:
+                                          _todoDescriptionFormController
+                                              .value.text);
+                                  if (newTodo.description.isNotEmpty) {
+
+                                    todoBloc.addTodo(newTodo);
+
+                                    //dismisses the bottomsheet
+                                    Navigator.pop(context);
+                                  }
+                                },
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+
+
+  Widget getTodosWidget() {
+    /*The StreamBuilder widget,
+    basically this widget will take stream of data (todos)
+    and construct the UI (with state) based on the stream
+    */
     return StreamBuilder(
       stream: todoBloc.todos,
       builder: (BuildContext context, AsyncSnapshot<List<Todo>> snapshot) {
@@ -83,18 +171,18 @@ class _HomeState extends State<Home> {
   }
 
   Widget getTodoCardWidget(AsyncSnapshot<List<Todo>> snapshot) {
+
     if (snapshot.hasData) {
-      print('here is the snapshot');
+
       return snapshot.data.length != 0
           ? ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (context, itemPosition) {
                 Todo todo = snapshot.data[itemPosition];
-                print('here is the item builder');
                 final Widget dismissibleCard = new Dismissible(
                   background: Container(
                     child: Padding(
-                      padding: EdgeInsets.only(left: 10),
+                      padding: EdgeInsets.only(left: 8.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -106,159 +194,81 @@ class _HomeState extends State<Home> {
                     color: Colors.redAccent,
                   ),
                   onDismissed: (direction) {
+                    /*The magic
+                    delete Todo item by ID whenever
+                    the card is dismissed
+                    */
                     todoBloc.deleteTodoById(todo.id);
                   },
-                  direction: DismissDirection.horizontal,
+                  direction: _dismissDirection,
                   key: new ObjectKey(todo),
                   child: Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.grey[200], width: 0.5),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    color: Colors.white,
-                    child: ListTile(
-                      leading: InkWell(
-                        onTap: () {
-                          todo.is_done = !todo.is_done;
-                          todoBloc.updateTodo(todo);
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: todo.is_done
-                                ? Icon(
-                                    Icons.done,
-                                    size: 26.0,
-                                    color: Colors.indigoAccent,
-                                  )
-                                : Icon(
-                                    Icons.check_box_outline_blank,
-                                    size: 26.0,
-                                    color: Colors.tealAccent,
-                                  ),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.grey[200], width: 0.5),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      color: Colors.white,
+                      child: ListTile(
+                        leading: InkWell(
+                          onTap: () {
+                            //Reverse the value
+                            todo.is_done = !todo.is_done;
+                            todoBloc.updateTodo(todo);
+                          },
+                          child: Container(
+                            //decoration: BoxDecoration(),
+                            child: Padding(
+                              padding: const EdgeInsets.only ( right : 8.0),
+                              child: todo.is_done
+                                  ? Icon(
+                                      Icons.done,
+                                      size: 26.0,
+                                      color: Colors.indigoAccent,
+                                    )
+                                  : Icon(
+                                      Icons.check_box_outline_blank,
+                                      size: 26.0,
+                                      color: Colors.blue,
+                                    ),
+                            ),
                           ),
                         ),
-                      ),
-                      title: Text(
-                        todo.description,
-                      ),
-                    ),
-                  ),
+                        title: Text(
+                          todo.description,
+                          style: GoogleFonts.raleway(
+                          fontSize: 22.0,
+                        ),
+                        ),
+                      )),
                 );
                 return dismissibleCard;
               },
             )
           : Container(
               child: Center(
-              //this is used whenever there 0 Todo
-              //in the data base
               child: noTodoMessageWidget(),
             ));
     } else {
-      print('circular progress');
       return Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 2.0,
-        ),
+        child: CircularProgressIndicator(strokeWidth : 2.0),
       );
     }
   }
 
+
   Widget noTodoMessageWidget() {
-    print('no todo message ');
     return Container(
-      child: Center(
-        child: Text(
-          "Start your day right :D",
-        ),
+      child: Text(
+        'Start your day now !',
+        style:
+        GoogleFonts.roboto(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+        // TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
       ),
     );
   }
 
-  void _showAddTodoSheet(BuildContext context) {
-    final _todoDescriptionFormController = TextEditingController();
-    showModalBottomSheet(
-      context: context,
-      builder: (builder) {
-        return Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: new Container(
-            color: Colors.transparent,
-            child: new Container(
-              // was 230
-              height: 100,
-              decoration: new BoxDecoration(
-                color: Colors.white,
-                borderRadius: new BorderRadius.only(
-                  topLeft: const Radius.circular(5.0),
-                  topRight: const Radius.circular(5.0),
-                ),
-              ),
-              child: Padding(
-                padding:
-                    EdgeInsets.only(left: 15, top: 25.0, right: 15, bottom: 30),
-                child: ListView(
-                  children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            controller: _todoDescriptionFormController,
-                            textInputAction: TextInputAction.newline,
-                            maxLines: 2,
-                            autofocus: true,
-                            decoration: const InputDecoration(
-                              hintText: 'I have to...',
-                              labelText: 'New Todo',
-                              labelStyle: TextStyle(
-                                  color: Colors.indigoAccent,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            validator: (String value) {
-                              if (value.isEmpty) {
-                                return 'Empty task!';
-                              }
-                              return value.contains('')
-                                  ? 'Do not use the @ char.'
-                                  : null;
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 5, top: 15),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.indigoAccent,
-                            radius: 18,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.save,
-                                size: 22,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                final newTodo = Todo(
-                                    description: _todoDescriptionFormController
-                                        .value.text);
-                                if (newTodo.description.isNotEmpty) {
-                                  todoBloc.addTodo(newTodo);
-                                  Navigator.pop(context);
-                                }
-                              },
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
+
 }
