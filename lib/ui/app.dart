@@ -8,8 +8,9 @@ return MaterialApp(
 // debugShowCheckedModeBanner: false,
 title: 'Do it',
 theme: ThemeData(
-primarySwatch: Colors.purple,
-canvasColor: Colors.transparent
+// primarySwatch: Colors.purple,
+canvasColor: Colors.transparent, 
+appBarTheme: AppBarTheme(elevation : 0.0,),
 ),
 //Our only screen/page we have
 home: Home(), 
